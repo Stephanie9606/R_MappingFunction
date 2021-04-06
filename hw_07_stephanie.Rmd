@@ -24,13 +24,15 @@ knitr::opts_chunk$set(fig.align  = "center",
 
 ```{r}
 library(readr)
+library(broom)
+library(tidyverse)
 ```
 
 # Load global and US confirmed cases and deaths data into a nested data frame
 1. Create a variable called `url_in` to store this URL: "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/". This allows you do directly download the files at the John's Hopkins site:  "https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series"
 
 ```{r}
-url_in <- c("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/")
+url_in <- httr::GET("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/")
 ```
 
 2. Create a tibble named `df` with a variable called `file_names` with a row for each of the following four file names to be loaded from the URL:
@@ -38,6 +40,11 @@ url_in <- c("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/cs
     + time_series_covid19_deaths_global.csv
     + time_series_covid19_confirmed_US.csv
     + time_series_covid19_deaths_US.csv
+    
+```{r}
+glimpse(url_in)
+```
+
 3. Create a variable in the data frame called `url` that puts `url_in` on the front of each file_name to create a complete URL.
 4. Use `mutate()` with `map()` to create a list column called `data` with each row holding the downloaded data frame for each file name
 5. Add a factor variable to `df` called `"`case_type`"` with the **unique** portions of the file names.
