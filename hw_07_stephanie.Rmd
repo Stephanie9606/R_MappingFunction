@@ -42,7 +42,11 @@ url_in <- httr::GET("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/m
     + time_series_covid19_deaths_US.csv
     
 ```{r}
-glimpse(url_in)
+# glimpse(url_in)
+
+# create a tibble
+file_names <- c("time_series_covid19_confirmed_global.csv", "time_series_covid19_deaths_global.csv", "time_series_covid19_confirmed_US.csv", "time_series_covid19_deaths_US.csv")
+df <- tibble(file_names)
 ```
 
 3. Create a variable in the data frame called `url` that puts `url_in` on the front of each file_name to create a complete URL.
