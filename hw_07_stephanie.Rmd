@@ -22,8 +22,17 @@ knitr::opts_chunk$set(fig.align  = "center",
                       fig.width  = 6)
 ```
 
+```{r}
+library(readr)
+```
+
 # Load global and US confirmed cases and deaths data into a nested data frame
 1. Create a variable called `url_in` to store this URL: "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/". This allows you do directly download the files at the John's Hopkins site:  "https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series"
+
+```{r}
+url_in <- c("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/")
+```
+
 2. Create a tibble named `df` with a variable called `file_names` with a row for each of the following four file names to be loaded from the URL:
     + time_series_covid19_confirmed_global.cs
     + time_series_covid19_deaths_global.csv
