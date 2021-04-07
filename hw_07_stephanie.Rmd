@@ -28,6 +28,7 @@ library(broom)
 library(tidyverse)
 library(stringr)
 library(purrr)
+library(lubridate)
 ```
 
 # Load global and US confirmed cases and deaths data into a nested data frame
@@ -151,6 +152,7 @@ df %>%
   group_by(case_type) %>% 
   slice(1:15) ->
   df
+df$data[[1]]
 ```
 
 - Hint: Look at help for `map_if()`
@@ -160,6 +162,15 @@ df %>%
 1. Use `map()` along with `pivot_longer()` to tidy each data frame.
 - As part of the pivot, ensure the daily values are in a variable called "`Date`" and use a lubridate function *inside the pivot* to ensure it is of class `date`.
 2. Save the new data frame to a variable called `df_long`
+```{r}
+df %>% 
+  mutate(data = map(data, ~pivot_longer(., cols = c(contains("/")),
+             names_to = "Date",
+             # names_ptypes = list(Date = integer()),
+             values_to = "Cases"))) ->
+  df_long
+df_long$data[[1]]
+```
 
 
 # Add Continents 
