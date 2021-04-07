@@ -60,10 +60,20 @@ df %>%
 ```{r}
 df %>% 
   mutate(data = map(file_names,
-           ~ read_csv(file.path(url, .))))
+           ~ read_csv(file.path(url, .)))) ->
+  df
 ```
 
 5. Add a factor variable to `df` called `"`case_type`"` with the **unique** portions of the file names.
+```{r}
+df %>% 
+  mutate(case_type = str_sub(file_names, start = 21, end = -1)) %>% 
+  mutate(case_type = str_remove(case_type, "time_series_covid19_")) %>% 
+  mutate(case_type = str_remove(case_type, ".csv")) %>% 
+  mutate(case_type = as.factor(case_type)) ->
+  df
+```
+
 6. Remove any columns other than `case_types` and `data` from `df`.
 - `df` should have four observations of two variables.
 
