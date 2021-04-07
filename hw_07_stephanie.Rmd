@@ -117,6 +117,11 @@ fix_names <- function(x) {
 ```
 
 b. Use your function with `map()` to convert "Province/State" and "Country/Region" to "Province_State" "Country_Region" .
+```{r}
+df %>% 
+  mutate(vars = map_chr(vars, fix_names))
+```
+
 c. Use your function with `map()` to convert "Admin2 to "County" and "Long_" to "Long".
 d. Use a purrr function to remove the variables "UID", "iso2", "iso3", "code3", "FIPS", and "Combined_Key" from only the US data.
 e. Use a purrr function to add variables `Population` and `County` to the data frames where missing.
