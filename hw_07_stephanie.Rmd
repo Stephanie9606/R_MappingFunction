@@ -29,6 +29,7 @@ library(tidyverse)
 library(stringr)
 library(purrr)
 library(lubridate)
+library(countrycode)
 ```
 
 # Load global and US confirmed cases and deaths data into a nested data frame
@@ -179,6 +180,11 @@ df_long$data[[1]]
 - If you don't have it already, use the console to install. 
 - Then load package {countrycode} and look at help for `countrycode::countrycode`
 - You will get some warning messages about NAs which you will fix next.
+```{r}
+df_long %>% 
+  mutate(data = map(data, ~mutate(., Continent = countrycode(Country_Region, origin = 'country.name', destination = 'iso3c')))) ->
+  df_long
+```
 
 
 # Fix NAs for Continents
