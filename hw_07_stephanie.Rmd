@@ -86,17 +86,36 @@ df %>%
 1. Using a single call to `map()`, add only the first 15 names from each of the four data frames to a new variable in `df` called `vars`.
  - Visually compare them to identify issues across the rows.
 ```{r}
-glimpse(df)
-df$data[[1]]
+# glimpse(df)
+# df$data[[1]]
 df %>% 
   mutate(vars = map(data, names)) %>% 
   unnest(vars) %>% 
   group_by(case_type) %>% 
-  slice(1:15)
+  slice(1:15) ->
+  df
 ```
 
 2. Use a purrr function for each of the following steps (except a) to fix any issues and create consistent data frames.  
 a. Create a short helper function called `fix_names()` which takes three arguments: a data frame, a string pattern, and a string "replacement pattern". It should replace all occurrences of the "string pattern" in the names of the variables in the data frame with the "replacement pattern". Include error checking to ensure the inputs are of the proper class.
+```{r}
+fix_names <- function(x) {
+  if (is.character(x)){
+    if (str_detect(x, "^[A-za-z]+\\/")) {
+    str_replace(x, "/", "_")
+  } else if(str_detect(x, "^[A-Z][a-z]+\\_$")) {
+    str_replace(x, "_", " ")
+  } else if(str_detect(x, "^[A-Z][a-z]+\\d$")) {
+    str_replace(x, "Admin2", "County")
+  } else {
+    x
+  }
+  } else {
+    retun("Not Chr!")
+  }
+}
+```
+
 b. Use your function with `map()` to convert "Province/State" and "Country/Region" to "Province_State" "Country_Region" .
 c. Use your function with `map()` to convert "Admin2 to "County" and "Long_" to "Long".
 d. Use a purrr function to remove the variables "UID", "iso2", "iso3", "code3", "FIPS", and "Combined_Key" from only the US data.
