@@ -76,6 +76,11 @@ df %>%
 
 6. Remove any columns other than `case_types` and `data` from `df`.
 - `df` should have four observations of two variables.
+```{r}
+df %>% 
+  select(case_type, data) ->
+  df
+```
 
 # Clean Data  
 1. Using a single call to `map()`, add only the first 15 names from each of the four data frames to a new variable in `df` called `vars`.
