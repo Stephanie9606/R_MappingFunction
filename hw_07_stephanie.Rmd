@@ -59,8 +59,7 @@ df %>%
 4. Use `mutate()` with `map()` to create a list column called `data` with each row holding the downloaded data frame for each file name
 ```{r}
 df %>% 
-  mutate(data = map(file_names,
-           ~ read_csv(file.path(url, .)))) ->
+  mutate(data = map(url, read_csv)) ->
   df
 ```
 
@@ -82,10 +81,13 @@ df %>%
   df
 ```
 
+
 # Clean Data  
 1. Using a single call to `map()`, add only the first 15 names from each of the four data frames to a new variable in `df` called `vars`.
  - Visually compare them to identify issues across the rows.
- 
+```{r}
+
+```
 
 2. Use a purrr function for each of the following steps (except a) to fix any issues and create consistent data frames.  
 a. Create a short helper function called `fix_names()` which takes three arguments: a data frame, a string pattern, and a string "replacement pattern". It should replace all occurrences of the "string pattern" in the names of the variables in the data frame with the "replacement pattern". Include error checking to ensure the inputs are of the proper class.
