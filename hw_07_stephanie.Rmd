@@ -99,34 +99,60 @@ df %>%
 2. Use a purrr function for each of the following steps (except a) to fix any issues and create consistent data frames.  
 a. Create a short helper function called `fix_names()` which takes three arguments: a data frame, a string pattern, and a string "replacement pattern". It should replace all occurrences of the "string pattern" in the names of the variables in the data frame with the "replacement pattern". Include error checking to ensure the inputs are of the proper class.
 ```{r}
-fix_names <- function(x) {
-  if (is.character(x)){
-    if (str_detect(x, "^[A-za-z]+\\/")) {
-    str_replace(x, "/", "_")
-  } else if(str_detect(x, "^[A-Z][a-z]+\\_$")) {
-    str_replace(x, "_", " ")
-  } else if(str_detect(x, "^[A-Z][a-z]+\\d$")) {
-    str_replace(x, "Admin2", "County")
-  } else {
-    x
-  }
-  } else {
-    retun("Not Chr!")
-  }
+fix_names <- function(dfr, strp, strrep) {
+  stopifnot(is.data.frame(dfr), is.character(strp), is.character(strrep))
+  names(dfr) <- str_replace_all(names(dfr), strp, strrep)
+  return(dfr)
 }
 ```
 
 b. Use your function with `map()` to convert "Province/State" and "Country/Region" to "Province_State" "Country_Region" .
 ```{r}
 df %>% 
-  mutate(vars = map_chr(vars, fix_names))
+  mutate(data = map(data, ~fix_names(., "([ey])/", "\\1_"))) ->
+  df
 ```
 
 c. Use your function with `map()` to convert "Admin2 to "County" and "Long_" to "Long".
+```{r}
+df %>% 
+  mutate(data = map(data, ~fix_names(., "Long_", "Long"))) %>% 
+  mutate(data = map(data, ~fix_names(., "Admin2", "County"))) ->
+  df
+```
+
 d. Use a purrr function to remove the variables "UID", "iso2", "iso3", "code3", "FIPS", and "Combined_Key" from only the US data.
+```{r}
+df %>% 
+  mutate(data = map_if(data, str_detect(case_type, "US"), ~select(., -c("UID", "iso2", "iso3", "code3", "FIPS", "Combined_Key")))) ->
+  df
+```
+
 e. Use a purrr function to add variables `Population` and `County` to the data frames where missing.
+```{r}
+df %>% 
+  mutate(data = map_if(data, str_detect(case_type, "global"), ~mutate(., County = "NA"))) %>% 
+  mutate(data = map_if(data, !str_detect(case_type, "deaths_US"), ~mutate(., Population = 0))) ->
+  df
+```
+
 f. Use a purrr function to add variable called `Country_State` that combines the country with the province/state while keeping the original columns.
+```{r}
+df %>% 
+  mutate(data = map(data, ~unite(., Country_State, c(Country_Region, Province_State), sep = "_", remove = FALSE, na.rm = TRUE))) ->
+  df
+```
+
 g. Update the values in `df$vars` with the new first 15 names and show the values to check for consistency in each pair of rows.
+```{r}
+df %>% 
+  mutate(vars = map(data, names)) %>% 
+  unnest(vars) %>% 
+  group_by(case_type) %>% 
+  slice(1:15) ->
+  df
+```
+
 - Hint: Look at help for `map_if()`
 
 
