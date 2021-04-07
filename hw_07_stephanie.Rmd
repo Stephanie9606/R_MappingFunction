@@ -86,7 +86,13 @@ df %>%
 1. Using a single call to `map()`, add only the first 15 names from each of the four data frames to a new variable in `df` called `vars`.
  - Visually compare them to identify issues across the rows.
 ```{r}
-
+glimpse(df)
+df$data[[1]]
+df %>% 
+  mutate(vars = map(data, names)) %>% 
+  unnest(vars) %>% 
+  group_by(case_type) %>% 
+  slice(1:15)
 ```
 
 2. Use a purrr function for each of the following steps (except a) to fix any issues and create consistent data frames.  
