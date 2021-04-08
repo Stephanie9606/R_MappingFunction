@@ -295,6 +295,12 @@ df_pop %>%
 ```
 
 4. Create an appropriate plot and then test to assess if there is a linear relationship between ranks for Total Population and Population Density. Interpret the plot and interpret the output from the model in terms of `$p$` value and adjusted R-squared.
+```{r}
+lmout <-  lm(Popdes_Rank ~ Poptol_Rank, data = df_pop)
+summary(lmout)
+# Based on the output, with p-value < 0.05, it suggests that there is enough evidence to say that there is a linear relationship between ranks for Total Population and Population Density. Adjusted R-squared shows that approximately 7% of the variation is explained by the regression model, so we can say that this is not a good model 
+```
+
 
 # Add Population Data to `df_all`
 - Use a dplyr join to add the data from `df_pop` to `df_all` to create `df_allp`
