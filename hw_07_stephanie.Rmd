@@ -169,7 +169,7 @@ df %>%
 df %>% 
   mutate(data = map(data, ~pivot_longer(., cols = c(contains("/")),
              names_to = "Date",
-             # names_ptypes = list(Date = integer()),
+             # names_ptypes = list(Date = integer()), # need revise
              values_to = "Cases"))) ->
   df_long
 ```
@@ -212,6 +212,10 @@ unnest(df_long, data) %>%
 ```
 
 2. Remove original `df` and `df_long` dataframes from the environment
+```{r}
+# do last
+```
+
 3. Remove the `vars` variable from df_all
 ```{r}
 df_all %>% 
@@ -220,17 +224,39 @@ df_all %>%
 ```
 
 
-
 # Get World Population Data
 1.a.  Use a readr function and relative path to read in the .csv with World population data for 2019 into its own data frame called `df_pop`.  
-
   - The data is from the [UN](https://population.un.org/wpp/Download/Standard/CSV/) which uses different country names in many cases from the COVID data. It also uses a different structure for separating countries and territories.  
   - The CSV has been adjusted to match the COVID data country names in many cases, e.g., US, and Iran.  
   - Note: the UN population data is in thousands so it can have fractional values. 
-  
-1.b. Identify the countries in the Covid data that are not in the population data.  
+```{r}
+df_pop <- read_csv("./data/WPP2019_TotalPopulation.csv")
+```
+
+1.b. Identify the countries in the Covid data that are not in the population data. 
+```{r}
+# df_all %>% head() - Country_State
+# df_pop %>% head() - Location
+
+anti_join(df_all, df_pop, by = c("Country_State" = "Location")) %>% 
+  distinct(Country_State)
+```
+
 1.c. Identify the countries in the population data that are not in the covid data. How many are there?  
+```{r}
+anti_join(df_pop, df_all, by = c("Location" = "Country_State")) %>% 
+  distinct(Location) %>% 
+  nrow()
+```
+
 1.d. What is the percentage of the world population contained in these countries? 
+```{r}
+anti_join(df_pop, df_all, by = c("Location" = "Country_State")) %>% 
+  summarise(sum_pop = sum(PopTotal))
+df_pop %>% 
+  summarise(sum_pop = sum(PopTotal))
+1533001/7713468
+```
 
   - Since the percentage is small, we will remove them from the subsequent analysis.
 
