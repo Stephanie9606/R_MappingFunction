@@ -205,8 +205,20 @@ unique(testdf[c("Continent")])
 
 # Unnest the Data Frames    
 1. Unnest and ungroup the data frame `df_long` and save into a new data frame called `df_all`
+```{r}
+unnest(df_long, data) %>% 
+  ungroup() ->
+  df_all
+```
+
 2. Remove original `df` and `df_long` dataframes from the environment
 3. Remove the `vars` variable from df_all
+```{r}
+df_all %>% 
+  select(-vars) ->
+  df_all
+```
+
 
 
 # Get World Population Data
