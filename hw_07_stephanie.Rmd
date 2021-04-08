@@ -81,6 +81,7 @@ df %>%
 df %>% 
   select(case_type, data) ->
   df
+df$data[[3]]
 ```
 
 
@@ -88,14 +89,14 @@ df %>%
 1. Using a single call to `map()`, add only the first 15 names from each of the four data frames to a new variable in `df` called `vars`.
  - Visually compare them to identify issues across the rows.
 ```{r}
-# glimpse(df)
-# df$data[[1]]
 df %>% 
-  mutate(vars = map(data, names)) %>% 
-  unnest(vars) %>% 
-  group_by(case_type) %>% 
-  slice(1:15) ->
+  mutate(vars = map(data, names)) ->
   df
+# check vars
+df %>% 
+  unnest(vars) %>% 
+  group_by(case_type, data) %>% 
+  slice(1:15)
 ```
 
 2. Use a purrr function for each of the following steps (except a) to fix any issues and create consistent data frames.  
@@ -148,12 +149,13 @@ df %>%
 g. Update the values in `df$vars` with the new first 15 names and show the values to check for consistency in each pair of rows.
 ```{r}
 df %>% 
-  mutate(vars = map(data, names)) %>% 
-  unnest(vars) %>% 
-  group_by(case_type) %>% 
-  slice(1:15) ->
+  mutate(vars = map(data, names)) ->
   df
-df$data[[1]]
+# check new vars
+df %>% 
+  unnest(vars) %>% 
+  group_by(case_type, data) %>% 
+  slice(1:15)
 ```
 
 - Hint: Look at help for `map_if()`
@@ -170,7 +172,6 @@ df %>%
              # names_ptypes = list(Date = integer()),
              values_to = "Cases"))) ->
   df_long
-df_long$data[[1]]
 ```
 
 
@@ -182,14 +183,38 @@ df_long$data[[1]]
 - You will get some warning messages about NAs which you will fix next.
 ```{r}
 df_long %>% 
-  mutate(data = map(data, ~mutate(., Continent = countrycode(Country_Region, origin = 'country.name', destination = 'iso3c')))) ->
+  mutate(data = map(data, ~mutate(., Continent = countrycode(Country_Region, origin = "country.name", destination = "continent")))) ->
   df_long
+
+df_long$data[[3]]
 ```
 
 
 # Fix NAs for Continents
 - Use `map()` with `case_when()` to replace the NAs due to "Diamond Princess", "Kosovo", "MS Zaandam" and Micronesia, with the most appropriate continent
 - Use `map()` with `unique()` to confirm five continents in the global data frames and one in the US data frames
+```{r}
+df_long$data[[4]] -> testdf
+testdf %>% 
+  mutate(Continent = case_when(
+    is.na(Continent) ~ "Oceania",
+    TRUE ~ as.character(Continent)
+  ))
+
+df_long %>% 
+  mutate(data = map(data, ~mutate(., Continent = case_when(
+    is.na(Continent) ~ "Oceania",
+    TRUE ~ as.character(Continent)
+  )))) ->
+  df_long
+df_long$data[[4]] -> testdf
+unique(testdf[c("Continent")])
+# check
+
+df_long$data[[1]] -> testdf
+unique(testdf$Continent)
+```
+
 
 # Unnest the Data Frames    
 1. Unnest and ungroup the data frame `df_long` and save into a new data frame called `df_all`
