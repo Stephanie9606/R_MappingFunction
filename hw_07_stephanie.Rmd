@@ -199,7 +199,7 @@ df_long %>%
   )))) ->
   df_long
 # check # need revise
-unique(testdf[c("Continent")])
+# unique(testdf[c("Continent")])
 ```
 
 
@@ -213,7 +213,7 @@ unnest(df_long, data) %>%
 
 2. Remove original `df` and `df_long` dataframes from the environment
 ```{r}
-# do last
+rm(df, df_long)
 ```
 
 3. Remove the `vars` variable from df_all
@@ -238,31 +238,31 @@ df_pop <- read_csv("./data/WPP2019_TotalPopulation.csv")
 # df_all %>% head() - Country_State
 # df_pop %>% head() - Location
 
-anti_join(df_all, df_pop, by = c("Country_State" = "Location")) %>% 
-  distinct(Country_State)
+anti_join(df_all, df_pop, by = c("Country_Region" = "Location")) %>% 
+  distinct(Country_Region)
 ```
 
 1.c. Identify the countries in the population data that are not in the covid data. How many are there?  
 ```{r}
-anti_join(df_pop, df_all, by = c("Location" = "Country_State")) %>% 
+anti_join(df_pop, df_all, by = c("Location" = "Country_Region")) %>% 
   distinct(Location) %>% 
   nrow()
 ```
 
 1.d. What is the percentage of the world population contained in these countries? 
 ```{r}
-anti_join(df_pop, df_all, by = c("Location" = "Country_State")) %>% 
+anti_join(df_pop, df_all, by = c("Location" = "Country_Region")) %>% 
   summarise(sum_pop = sum(PopTotal))
 df_pop %>% 
   summarise(sum_pop = sum(PopTotal))
-1533001/7713468
+47675.78/7713468
 ```
 
   - Since the percentage is small, we will remove them from the subsequent analysis.
 
 2. Use a dplyr join to remove all Locations that are not in the `df_all` data frame.
 ```{r}
-left_join(df_pop, df_all, by = c("Location" = "Country_State")) ->
+semi_join(df_pop, df_all, by = c("Location" = "Country_Region")) ->
   df_pop
 ```
 
@@ -271,34 +271,29 @@ left_join(df_pop, df_all, by = c("Location" = "Country_State")) ->
 ```{r}
 # Poptol_Rank
 df_pop %>% 
-  distinct(Location, PopTotal) %>% 
-  mutate(Poptol_Rank = min_rank(-PopTotal)) %>% 
-  full_join(df_pop, by = c("Location", "PopTotal")) ->
+  mutate(Poptol_Rank = min_rank(-PopTotal)) ->
   df_pop
 # Popdes_Rank
 df_pop %>% 
-  distinct(Location, PopDensity) %>% 
-  mutate(Popdes_Rank = min_rank(-PopDensity)) %>% 
-  full_join(df_pop, by = c("Location", "PopDensity")) ->
+  mutate(Popdes_Rank = min_rank(-PopDensity)) ->
   df_pop
 # show the top 10 countries for pop and dens
 # pops
 df_pop %>% 
-  select(Location, Poptol_Rank) %>% 
-  distinct() %>% 
-  arrange(Poptol_Rank, n = 10)
+  arrange(Poptol_Rank) %>% 
+  slice(1:10)
 # dens
 df_pop %>% 
-  select(Location, Popdes_Rank) %>% 
-  distinct() %>% 
-  arrange(Popdes_Rank, n = 10)
+  arrange(Popdes_Rank) %>% 
+  slice(1:10)
 ```
 
 4. Create an appropriate plot and then test to assess if there is a linear relationship between ranks for Total Population and Population Density. Interpret the plot and interpret the output from the model in terms of `$p$` value and adjusted R-squared.
 ```{r}
-lmout <-  lm(Popdes_Rank ~ Poptol_Rank, data = df_pop)
+# need revise
+lmout <-  lm(PopTotal ~ PopDensity, data = df_pop)
 summary(lmout)
-# Based on the output, with p-value < 0.05, it suggests that there is enough evidence to say that there is a linear relationship between ranks for Total Population and Population Density. Adjusted R-squared shows that approximately 7% of the variation is explained by the regression model, so we can say that this is not a good model 
+# Based on the output, with p-value < 0.05, it suggests that there is enough evidence to say that there is a linear relationship between ranks for Total Population and Population Density. Adjusted R-squared shows that approximately 20% of the variation is explained by the regression model, so we can say that this is not a good model 
 ```
 
 
@@ -307,7 +302,12 @@ summary(lmout)
 - This means there will be two columns with population data:
   + `Population` for US Counties
   + `PopTotal` for the country level
-  
+```{r}
+df_all %>%
+  left_join(df_pop, by = c("Country_Region" = "Location")) ->
+  df_allp
+```
+
 
 # How many Country Regions have Multiple Country States?
 - Calculate the number of Country States for each Country Region
