@@ -269,22 +269,22 @@ semi_join(df_pop, df_all, by = c("Location" = "Country_Region")) ->
 3. Use a dplyr function to add the ranks for each location for population and population density to `df_pop` where the country with the largest value is number 1 for that variables. Show the top 10 countries for Population and for population density.
   + Calculate the ranks using a method where if `n` countries are tied at the same rank, the next rank is `n` greater than the rank with if the ties. As an example, if two countries are tied at 2, the next non-tied country has rank 4.
 ```{r}
-# Poptol_Rank
+# PopTotal Rank
 df_pop %>% 
-  mutate(Poptol_Rank = min_rank(-PopTotal)) ->
+  mutate(rank_p = min_rank(-PopTotal)) ->
   df_pop
-# Popdes_Rank
+# PopDensity Rank
 df_pop %>% 
-  mutate(Popdes_Rank = min_rank(-PopDensity)) ->
+  mutate(rank_d = min_rank(-PopDensity)) ->
   df_pop
 # show the top 10 countries for pop and dens
 # pops
 df_pop %>% 
-  arrange(Poptol_Rank) %>% 
+  arrange(rank_p) %>% 
   slice(1:10)
 # dens
 df_pop %>% 
-  arrange(Popdes_Rank) %>% 
+  arrange(rank_d) %>% 
   slice(1:10)
 ```
 
@@ -325,7 +325,24 @@ df_allp %>%
 # Analyse Data
 1. Create a data frame by with data grouped by `Country_Region`, `Continent` `case_type`, `rank_p` and `rank_d` that summarizes the current totals and the totals as a percentage of total population.
   - Be sure to look at how the data is reported so the numbers make sense.
+```{r}
+df_allp %>% 
+  group_by(Country_Region, Continent, case_type, rank_p, rank_d) %>% 
+  summarise(cur_tols = max(Cases), 
+            per_tols = (cur_tols/(PopTotal*1000))*100) %>% 
+  distinct() ->
+  df_tolcases
+df_tolcases
+```
+  
 2. What are the 20 Countries with the most confirmed cases and what is the percentage of their total population affected?
+```{r}
+df_tolcases %>% 
+  filter(case_type == "confirmed_global" | case_type == "confirmed_US") %>% 
+  arrange(desc(cur_tols)) %>% 
+  head(n = 20)
+```
+
 3. What are the 20 Countries with the most deaths and what is the percentage of their total population affected?
 4. Describe the results based on the totals with the rankings for total population and population density.
 
