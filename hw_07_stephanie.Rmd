@@ -344,8 +344,15 @@ df_tolcases %>%
 ```
 
 3. What are the 20 Countries with the most deaths and what is the percentage of their total population affected?
-4. Describe the results based on the totals with the rankings for total population and population density.
+```{r}
+df_tolcases %>% 
+  filter(case_type == "deaths_global" | case_type == "deaths_US") %>% 
+  arrange(desc(cur_tols)) %>% 
+  head(n = 20)
+```
 
+4. Describe the results based on the totals with the rankings for total population and population density.
+- 
 
 
 # Which countries in the top 20 for percentage of population for cases are Not in the top 20 for the absolute number of cases.  Which countries in the top 20 for percentage of population for deaths are Not in the top 20 for the absolute number deaths?
