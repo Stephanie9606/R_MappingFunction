@@ -198,7 +198,7 @@ df_long %>%
     TRUE ~ as.character(Continent)
   )))) ->
   df_long
-# check
+# check # need revise
 unique(testdf[c("Continent")])
 ```
 
