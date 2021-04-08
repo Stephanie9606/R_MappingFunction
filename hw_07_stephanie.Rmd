@@ -312,6 +312,15 @@ df_all %>%
 # How many Country Regions have Multiple Country States?
 - Calculate the number of Country States for each Country Region
 - Show in descending order of the number of Country_States by Country_Region.
+```{r}
+df_allp %>% 
+  select(Country_Region, Country_State) %>% 
+  distinct() %>% 
+  group_by(Country_Region) %>% 
+  summarise(Num_States = n()) %>% 
+  arrange(desc(Num_States))
+```
+
 
 # Analyse Data
 1. Create a data frame by with data grouped by `Country_Region`, `Continent` `case_type`, `rank_p` and `rank_d` that summarizes the current totals and the totals as a percentage of total population.
