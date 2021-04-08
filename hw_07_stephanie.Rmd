@@ -352,7 +352,7 @@ df_tolcases %>%
 ```
 
 4. Describe the results based on the totals with the rankings for total population and population density.
-- 
+- It seems like countries which have higher rank of population and density has more confirmed cases and deaths
 
 
 # Which countries in the top 20 for percentage of population for cases are Not in the top 20 for the absolute number of cases.  Which countries in the top 20 for percentage of population for deaths are Not in the top 20 for the absolute number deaths?
