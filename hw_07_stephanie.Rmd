@@ -185,8 +185,6 @@ df %>%
 df_long %>% 
   mutate(data = map(data, ~mutate(., Continent = countrycode(Country_Region, origin = "country.name", destination = "continent")))) ->
   df_long
-
-df_long$data[[3]]
 ```
 
 
@@ -194,25 +192,14 @@ df_long$data[[3]]
 - Use `map()` with `case_when()` to replace the NAs due to "Diamond Princess", "Kosovo", "MS Zaandam" and Micronesia, with the most appropriate continent
 - Use `map()` with `unique()` to confirm five continents in the global data frames and one in the US data frames
 ```{r}
-df_long$data[[4]] -> testdf
-testdf %>% 
-  mutate(Continent = case_when(
-    is.na(Continent) ~ "Oceania",
-    TRUE ~ as.character(Continent)
-  ))
-
 df_long %>% 
   mutate(data = map(data, ~mutate(., Continent = case_when(
     is.na(Continent) ~ "Oceania",
     TRUE ~ as.character(Continent)
   )))) ->
   df_long
-df_long$data[[4]] -> testdf
-unique(testdf[c("Continent")])
 # check
-
-df_long$data[[1]] -> testdf
-unique(testdf$Continent)
+unique(testdf[c("Continent")])
 ```
 
 
