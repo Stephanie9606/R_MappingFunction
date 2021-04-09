@@ -200,7 +200,7 @@ df_long %>%
     TRUE ~ as.character(Continent)
   )))) ->
   df_long
-# check # need revise
+# check
 map(df_long$data, ~unique(.$Continent))
 ```
 
@@ -299,8 +299,7 @@ df_pop %>%
   ggtitle("Global Population Data") +
   xlab("Population Rank") +
   ylab("Density Rank")
-
-# need revise
+# lm
 lmout <-  lm(rank_p ~ rank_d, data = df_pop)
 summary(lmout)
 # Based on the output, with p-value < 0.05, it suggests that there is enough evidence to say that there is a negative correlation between ranks for Total Population and Population Density. Adjusted R-squared -0.002593, so we can say that this is not a good model 
