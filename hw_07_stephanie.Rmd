@@ -201,8 +201,7 @@ df_long %>%
   )))) ->
   df_long
 # check # need revise
-# df_long$data[[1]] -> testdf
-# unique(testdf[c("Continent")])
+map(df_long$data, ~unique(.$Continent))
 ```
 
 
@@ -332,7 +331,7 @@ df_allp %>%
 df_allp %>% 
   group_by(Country_Region, Continent, case_type, rank_p, rank_d) %>% 
   summarise(cur_tols = max(Cases), 
-            per_tols = (cur_tols/(PopTotal*1000))*100) %>% 
+            per_tols = (cur_tols/(PopTotal*1000))) %>% 
   distinct() ->
   df_tolcases
 df_tolcases
@@ -365,11 +364,18 @@ df_top20_dth
 # Which countries in the top 20 for percentage of population for cases are Not in the top 20 for the absolute number of cases.  Which countries in the top 20 for percentage of population for deaths are Not in the top 20 for the absolute number deaths?
 - Describe the results based on the per population results with the rankings for total population and population density.
 ```{r}
+# Confirmed Cases
 df_tolcases %>% 
   filter(case_type == "confirmed_global" | case_type == "confirmed_US") %>% 
   arrange(desc(per_tols)) %>% 
   head(n = 20) %>% 
   anti_join(df_top20_cfm)
+# Death Cases
+df_tolcases %>% 
+  filter(case_type == "deaths_global" | case_type == "deaths_US") %>% 
+  arrange(desc(per_tols)) %>% 
+  head(n = 20) %>% 
+  anti_join(df_top20_dth)
 ```
 
 
