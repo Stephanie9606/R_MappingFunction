@@ -199,6 +199,7 @@ df_long %>%
   )))) ->
   df_long
 # check # need revise
+# df_long$data[[1]] -> testdf
 # unique(testdf[c("Continent")])
 ```
 
@@ -340,7 +341,9 @@ df_tolcases
 df_tolcases %>% 
   filter(case_type == "confirmed_global" | case_type == "confirmed_US") %>% 
   arrange(desc(cur_tols)) %>% 
-  head(n = 20)
+  head(n = 20) ->
+  df_t20_ctol_cfm
+df_t20_ctol_cfm
 ```
 
 3. What are the 20 Countries with the most deaths and what is the percentage of their total population affected?
@@ -348,7 +351,9 @@ df_tolcases %>%
 df_tolcases %>% 
   filter(case_type == "deaths_global" | case_type == "deaths_US") %>% 
   arrange(desc(cur_tols)) %>% 
-  head(n = 20)
+  head(n = 20) ->
+  df_t20_ctol_dth
+df_t20_ctol_dth
 ```
 
 4. Describe the results based on the totals with the rankings for total population and population density.
@@ -357,6 +362,13 @@ df_tolcases %>%
 
 # Which countries in the top 20 for percentage of population for cases are Not in the top 20 for the absolute number of cases.  Which countries in the top 20 for percentage of population for deaths are Not in the top 20 for the absolute number deaths?
 - Describe the results based on the per population results with the rankings for total population and population density.
+```{r}
+df_tolcases %>% 
+  filter(case_type == "confirmed_global" | case_type == "confirmed_US") %>% 
+  arrange(desc(per_tols)) %>% 
+  head(n = 20) %>% 
+  anti_join(df_t20_ctol_cfm)
+```
 
 
 # Create two plots, one for the number of cases and one for the number of deaths over time for the top 20 country/region showing each country and faceting by continent with the same scale for the y axis. 
