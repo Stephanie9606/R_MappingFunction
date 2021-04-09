@@ -397,13 +397,13 @@ df_top20_cfm %>%
   geom_col() +
   facet_grid(Continent~ .) +
   scale_x_log10()
-# Interpretation: 
+# Interpretation
 df_top20_dth %>% 
   ggplot(aes(x = cur_tols, y = Country_Region)) +
   geom_col() +
   facet_grid(Continent~ .) +
   scale_x_log10()
-# Interpretation: 
+# Interpretation
 ```
 
 
