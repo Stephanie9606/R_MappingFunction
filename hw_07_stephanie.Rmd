@@ -395,11 +395,16 @@ df_tolcases %>%
 ```{r}
 df_top20_cfm %>% 
   ggplot(aes(x = cur_tols, y = Country_Region)) +
-  geom_col(width = 0.5) +
-  facet_wrap( ~ Continent, scales = "free_x") +
+  geom_col() +
+  facet_grid(Continent~ .) +
   scale_x_log10()
-
-df_top20_dth
+# Interpretation: 
+df_top20_dth %>% 
+  ggplot(aes(x = cur_tols, y = Country_Region)) +
+  geom_col() +
+  facet_grid(Continent~ .) +
+  scale_x_log10()
+# Interpretation: 
 ```
 
 
