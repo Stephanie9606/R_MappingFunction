@@ -419,5 +419,11 @@ df_US_Dth %>%
 ```
 
 3. Run a linear model to test for a linear relationship and interpret the results in terms of p value, adjusted R-squared and a plot of the residuals.
+```{r}
+ lm(Dthper_byState ~ TolDth_byState, data  = df_US_Dth) ->
+  lmout2
+summary(lmout2)
+# Based on the result, the p-value < 0.05 which suggests that there is enough evidence to say that there is a linear relationship between total deaths and deaths per population. Adjusted R-squared is 1, meaning 100% of the variation is explained by the regression model, so we can say that this is a good model 
+```
 
 
