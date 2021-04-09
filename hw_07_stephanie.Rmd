@@ -170,8 +170,9 @@ df %>%
 df %>% 
   mutate(data = map(data, ~pivot_longer(., cols = c(contains("/")),
              names_to = "Date",
-             # names_ptypes = list(Date = integer()), # need revise
-             values_to = "Cases"))) ->
+             values_to = "Cases",
+             names_transform = list(Date = mdy),
+             ))) ->
   df_long
 ```
 
@@ -379,7 +380,7 @@ df_tolcases %>%
 ```{r}
 df_top20_cfm %>% 
   ggplot(aes(x = cur_tols, y = as.factor(Country_Region))) +
-  geom_bar() +
+  geom_boxplot() +
   facet_wrap( ~ Continent) +
   scale_x_log10()
 
