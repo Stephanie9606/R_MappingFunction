@@ -292,10 +292,18 @@ df_pop %>%
 
 4. Create an appropriate plot and then test to assess if there is a linear relationship between ranks for Total Population and Population Density. Interpret the plot and interpret the output from the model in terms of `$p$` value and adjusted R-squared.
 ```{r}
+df_pop %>% 
+  ggplot(aes(x = rank_p, y = rank_d)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Global Population Data") +
+  xlab("Population Rank") +
+  ylab("Density Rank")
+
 # need revise
-lmout <-  lm(PopTotal ~ PopDensity, data = df_pop)
+lmout <-  lm(rank_p ~ rank_d, data = df_pop)
 summary(lmout)
-# Based on the output, with p-value < 0.05, it suggests that there is enough evidence to say that there is a linear relationship between ranks for Total Population and Population Density. Adjusted R-squared shows that approximately 20% of the variation is explained by the regression model, so we can say that this is not a good model 
+# Based on the output, with p-value < 0.05, it suggests that there is enough evidence to say that there is a negative correlation between ranks for Total Population and Population Density. Adjusted R-squared -0.002593, so we can say that this is not a good model 
 ```
 
 
@@ -331,7 +339,7 @@ df_allp %>%
 df_allp %>% 
   group_by(Country_Region, Continent, case_type, rank_p, rank_d) %>% 
   summarise(cur_tols = max(Cases), 
-            per_tols = (cur_tols/(PopTotal*1000))) %>% 
+            per_tols = (cur_tols/(PopTotal*1000*100))) %>% 
   distinct() ->
   df_tolcases
 df_tolcases
@@ -376,6 +384,7 @@ df_tolcases %>%
   arrange(desc(per_tols)) %>% 
   head(n = 20) %>% 
   anti_join(df_top20_dth)
+# Describe
 ```
 
 
@@ -385,9 +394,9 @@ df_tolcases %>%
 - Interpret each plot with respect to the total cases/deaths and the path of cases/deaths across different continents.
 ```{r}
 df_top20_cfm %>% 
-  ggplot(aes(x = cur_tols, y = as.factor(Country_Region))) +
-  geom_boxplot() +
-  facet_wrap( ~ Continent) +
+  ggplot(aes(x = cur_tols, y = Country_Region)) +
+  geom_col(width = 0.5) +
+  facet_wrap( ~ Continent, scales = "free_x") +
   scale_x_log10()
 
 df_top20_dth
