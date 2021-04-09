@@ -30,6 +30,7 @@ library(stringr)
 library(purrr)
 library(lubridate)
 library(countrycode)
+library(ggplot2)
 ```
 
 # Load global and US confirmed cases and deaths data into a nested data frame
@@ -342,8 +343,8 @@ df_tolcases %>%
   filter(case_type == "confirmed_global" | case_type == "confirmed_US") %>% 
   arrange(desc(cur_tols)) %>% 
   head(n = 20) ->
-  df_t20_ctol_cfm
-df_t20_ctol_cfm
+  df_top20_cfm
+df_top20_cfm
 ```
 
 3. What are the 20 Countries with the most deaths and what is the percentage of their total population affected?
@@ -352,8 +353,8 @@ df_tolcases %>%
   filter(case_type == "deaths_global" | case_type == "deaths_US") %>% 
   arrange(desc(cur_tols)) %>% 
   head(n = 20) ->
-  df_t20_ctol_dth
-df_t20_ctol_dth
+  df_top20_dth
+df_top20_dth
 ```
 
 4. Describe the results based on the totals with the rankings for total population and population density.
@@ -367,7 +368,7 @@ df_tolcases %>%
   filter(case_type == "confirmed_global" | case_type == "confirmed_US") %>% 
   arrange(desc(per_tols)) %>% 
   head(n = 20) %>% 
-  anti_join(df_t20_ctol_cfm)
+  anti_join(df_top20_cfm)
 ```
 
 
@@ -375,12 +376,48 @@ df_tolcases %>%
 - Use appropriate scales for the axes.
 - Create two sets of plots
 - Interpret each plot with respect to the total cases/deaths and the path of cases/deaths across different continents.
+```{r}
+df_top20_cfm %>% 
+  ggplot(aes(x = cur_tols, y = as.factor(Country_Region))) +
+  geom_bar() +
+  facet_wrap( ~ Continent) +
+  scale_x_log10()
+
+df_top20_dth
+```
 
 
 # Analyze US States Deaths **Extra Credit**
 
 1. Create a data frame with the total deaths and deaths per population for those US states with more than 0 deaths and more than 0 population.
+```{r}
+df_allp %>% 
+  filter(Country_Region == "US") %>% 
+  filter(case_type == "deaths_US") %>% 
+  group_by(Country_State) %>% 
+  summarise(TolDth_byState = max(Cases), 
+            Dthper_byState = TolDth_byState/(PopTotal*1000)) %>% 
+  distinct() ->
+  df_US_Dth
+df_US_Dth %>% 
+  filter(TolDth_byState > 0) ->
+  df_US_Dth
+df_US_Dth
+```
+
 2. Use an appropriate plot to assess for a linear relationship between total deaths and deaths per population using log scales for x and y axes. Interpret the plot.
+```{r}
+df_US_Dth %>% 
+  ggplot(aes(x = TolDth_byState, y = Dthper_byState)) +
+  geom_point() +
+  scale_x_log10() +
+  scale_y_log10() +
+  ggtitle("Covid US Death Data") +
+  xlab("Total Deaths by State") +
+  ylab("Deaths per Population by State")
+# Based on the plot, we can see that there is a positive correlation between total deaths and deaths per population
+```
+
 3. Run a linear model to test for a linear relationship and interpret the results in terms of p value, adjusted R-squared and a plot of the residuals.
 
 
