@@ -338,7 +338,7 @@ df_allp %>%
 df_allp %>% 
   group_by(Country_Region, Continent, case_type, rank_p, rank_d) %>% 
   summarise(cur_tols = max(Cases), 
-            per_tols = (cur_tols/(PopTotal*1000*100))) %>% 
+            per_tols = (cur_tols/(PopTotal*1000*100))) %>%  # *100 bc of "percentage"
   distinct() ->
   df_tolcases
 df_tolcases
@@ -365,7 +365,7 @@ df_top20_dth
 ```
 
 4. Describe the results based on the totals with the rankings for total population and population density.
-- It seems like countries which have higher rank of population and density has more confirmed cases and deaths
+- It seems like countries which have higher rank of population has more confirmed cases and deaths
 
 
 # Which countries in the top 20 for percentage of population for cases are Not in the top 20 for the absolute number of cases.  Which countries in the top 20 for percentage of population for deaths are Not in the top 20 for the absolute number deaths?
@@ -383,7 +383,7 @@ df_tolcases %>%
   arrange(desc(per_tols)) %>% 
   head(n = 20) %>% 
   anti_join(df_top20_dth)
-# Describe
+# Based on the results, we can see that higher percentage of population for cases and deaths usually have higher population density, but lower total population
 ```
 
 
@@ -403,7 +403,7 @@ df_top20_dth %>%
   geom_col() +
   facet_wrap(. ~ Continent) +
   scale_x_log10()
-# Interpretation: The more confirmed cases the more death cases, we can comclude that based on two plots
+# Interpretation: Based on two plots, we can conclude that the more confirmed cases the more death cases
 ```
 
 
@@ -443,6 +443,7 @@ df_US_Dth %>%
  lm(Dthper_byState ~ TolDth_byState, data  = df_US_Dth) ->
   lmout2
 summary(lmout2)
+plot(lmout2)
 # Based on the result, the p-value < 0.05 which suggests that there is enough evidence to say that there is a linear relationship between total deaths and deaths per population. Adjusted R-squared is 1, meaning 100% of the variation is explained by the regression model, so we can say that this is a good model 
 ```
 
