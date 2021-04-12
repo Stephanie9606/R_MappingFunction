@@ -395,13 +395,13 @@ df_tolcases %>%
 df_top20_cfm %>% 
   ggplot(aes(x = cur_tols, y = Country_Region)) +
   geom_col() +
-  facet_grid(Continent~ .) +
+  facet_wrap(. ~ Continent) +
   scale_x_log10()
 # Interpretation: Based on the plot we can see that US has the highest confirmed cases of Covid, then Brazil and India
 df_top20_dth %>% 
   ggplot(aes(x = cur_tols, y = Country_Region)) +
   geom_col() +
-  facet_grid(Continent~ .) +
+  facet_wrap(. ~ Continent) +
   scale_x_log10()
 # Interpretation: The more confirmed cases the more death cases, we can comclude that based on two plots
 ```
